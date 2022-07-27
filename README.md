@@ -1,4 +1,4 @@
-# command-line-app
+# Command Line App
 A simple command line application to practice golang
 
 # Commands
