@@ -1,8 +1,7 @@
 package app
 
 import (
-	"fmt"
-	"log"
+	"command-line-app/util"
 	"net"
 
 	"github.com/urfave/cli"
@@ -42,25 +41,17 @@ func configure(app *cli.App) {
 }
 
 func searchIp(context *cli.Context) {
-	host := context.String("host")
-	ips, err := net.LookupIP(host)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	for _, ip := range ips {
-		fmt.Println(ip)
-	}
+	util.Search(context, func(host string) ([]net.IP, error) {
+		return net.LookupIP(host)
+	})
 }
 
 func searchServers(context *cli.Context) {
-	host := context.String("host")
-	servers, err := net.LookupNS(host)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	for _, server := range servers {
-		fmt.Println(server.Host)
-	}
+	util.Search(context, func(host string) ([]string, error) {
+		servers, err := net.LookupNS(host)
+		serversStr := util.Map(servers, func(server *net.NS) string {
+			return server.Host
+		})
+		return serversStr, err
+	})
 }
